@@ -1,7 +1,7 @@
 'use strict'
 
 /* eslint no-prototype-builtins: 0 */
-
+const AWS = require('aws-sdk')
 const pump = require('pump')
 const split = require('split2')
 const Writable = require('readable-stream').Writable
@@ -47,6 +47,13 @@ function pinoElasticSearch (opts) {
     }
     return value
   })
+
+  if (opts.isAWS) {
+    AWS.config.update({
+      credentials: new AWS.Credentials(process.env.AWS_ACCESS_KEY, process.env.AWS_SECRET),
+      region: process.env.AWS_REGION
+    })
+  }
 
   const ecsClientAwsOptions = opts.isAWS ? {
     connectionClass: require('http-aws-es')
@@ -120,6 +127,7 @@ function pinoElasticSearch (opts) {
         if (!err) {
           splitter.emit('insert', data.result, obj.body)
         } else {
+          console.log('ERR ', err)
           splitter.emit('insertError', err)
         }
         // skip error and continue
