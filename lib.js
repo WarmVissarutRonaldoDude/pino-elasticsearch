@@ -127,7 +127,6 @@ function pinoElasticSearch (opts) {
         if (!err) {
           splitter.emit('insert', data.result, obj.body)
         } else {
-          console.log('ERR ', err)
           splitter.emit('insertError', err)
         }
         // skip error and continue
