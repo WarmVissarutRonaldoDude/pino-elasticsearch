@@ -44,7 +44,7 @@ test('store a log line', { timeout }, (t) => {
   log.info('hello world')
 
   instance.on('insert', (obj, body) => {
-    t.ok(obj, 'data uploaded')
+    t.ok(obj, 'created')
 
     client.get({
       index,
@@ -110,7 +110,7 @@ test('store an deeply nested log line', { timeout }, (t) => {
   })
 
   instance.on('insert', (obj, body) => {
-    t.ok(obj, 'data uploaded')
+    t.ok(obj, 'created')
     setTimeout(function () {
       client.get({
         index,
@@ -138,7 +138,7 @@ test('store lines in bulk', { timeout }, (t) => {
   log.info('hello world')
 
   instance.on('insert', (obj, body) => {
-    t.ok(obj, 'data uploaded')
+    t.ok(obj, 'created')
     setTimeout(function () {
       client.get({
         index,
@@ -162,7 +162,7 @@ test('replaces date in index', { timeout }, (t) => {
   log.info('hello world')
 
   instance.on('insert', (obj, body) => {
-    t.ok('data uploaded')
+    t.ok('created')
 
     client.get({
       index: index.replace('%{DATE}', new Date().toISOString().substring(0, 10)),
@@ -189,7 +189,7 @@ test('replaces date in index during bulk insert', { timeout }, (t) => {
   log.info('hello world')
 
   instance.on('insert', (obj, body) => {
-    t.ok(obj, 'data uploaded')
+    t.ok(obj, 'created')
     setTimeout(function () {
       client.get({
         index: index.replace('%{DATE}', new Date().toISOString().substring(0, 10)),
@@ -238,7 +238,7 @@ test('dynamic index name', { timeout }, (t) => {
   log.info('hello world')
 
   instance.on('insert', (obj, body) => {
-    t.ok('data uploaded')
+    t.ok('created')
 
     client.get({
       index: indexNameGenerated,
@@ -273,7 +273,7 @@ test('dynamic index name during bulk insert', { timeout }, (t) => {
   log.info('hello world')
 
   instance.on('insert', (obj, body) => {
-    t.ok(obj, 'data uploaded')
+    t.ok(obj, 'created')
     setTimeout(function () {
       client.get({
         index: indexNameGenerated,

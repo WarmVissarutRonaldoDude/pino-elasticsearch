@@ -46,7 +46,8 @@ const streamToElastic = pinoElastic({
   node: 'http://localhost:9200',
   'es-version': 6,
   'bulk-size': 200,
-  ecs: true
+  ecs: true,
+  isAWS: false,
 })
 
 const logger = pino({ level: 'info' }, streamToElastic)
