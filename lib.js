@@ -1,11 +1,11 @@
 'use strict'
 
 /* eslint no-prototype-builtins: 0 */
-
+const AWS = require('aws-sdk')
 const pump = require('pump')
 const split = require('split2')
 const Writable = require('readable-stream').Writable
-const { Client } = require('@elastic/elasticsearch')
+const { Client } = require('elasticsearch')
 const Parse = require('fast-json-parse')
 const toEcs = require('pino-to-ecs')
 
@@ -48,7 +48,22 @@ function pinoElasticSearch (opts) {
     return value
   })
 
-  const client = new Client({ node: opts.node })
+  if (opts.isAWS) {
+    AWS.config.update({
+      credentials: new AWS.Credentials(process.env.AWS_ACCESS_KEY, process.env.AWS_SECRET),
+      region: process.env.AWS_REGION
+    })
+  }
+
+  const ecsClientAwsOptions = opts.isAWS ? {
+    connectionClass: require('http-aws-es')
+  } : {}
+
+  const esClientOptions = Object.assign({
+    hosts: [opts.node]
+  }, ecsClientAwsOptions)
+
+  const client = new Client(esClientOptions)
 
   const esVersion = Number(opts['es-version']) || 7
   const useEcs = !!opts.ecs
@@ -85,7 +100,7 @@ function pinoElasticSearch (opts) {
         body: docs
       }, function (err, result) {
         if (!err) {
-          const items = result.body.items
+          const items = result.items
           for (var i = 0; i < items.length; i++) {
             // depending on the Elasticsearch version, the bulk response might
             // contain fields 'create' or 'index' (> ES 5.x)
@@ -110,7 +125,7 @@ function pinoElasticSearch (opts) {
       }
       client.index(obj, function (err, data) {
         if (!err) {
-          splitter.emit('insert', data.body, obj.body)
+          splitter.emit('insert', data.result, obj.body)
         } else {
           splitter.emit('insertError', err)
         }

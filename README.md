@@ -35,6 +35,13 @@ npm install pino-elasticsearch -g
 
 ### Usage as module
 
+for AWS set
+```
+process.env.AWS_ACCESS_KEY
+process.env.AWS_SECRET
+process.env.AWS_REGION
+```
+
 ```js
 const pino = require('pino')
 const pinoElastic = require('pino-elasticsearch')
@@ -46,7 +53,8 @@ const streamToElastic = pinoElastic({
   node: 'http://localhost:9200',
   'es-version': 6,
   'bulk-size': 200,
-  ecs: true
+  ecs: true,
+  isAWS: false,
 })
 
 const logger = pino({ level: 'info' }, streamToElastic)
