@@ -48,7 +48,7 @@ function pinoElasticSearch (opts) {
     return value
   })
 
-  if (opts.isAWS) {
+  if (opts.isAWS && opts.shouldUpdateAWSConfig) {
     AWS.config.update({
       credentials: new AWS.Credentials(process.env.AWS_ACCESS_KEY, process.env.AWS_SECRET),
       region: process.env.AWS_REGION
